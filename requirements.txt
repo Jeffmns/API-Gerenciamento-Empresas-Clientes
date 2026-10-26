@@ -1,7 +1,8 @@
 alembic
 fastapi 
 uvicorn 
-sqlalchemy 
+sqlalchemy
+sqlalchemy[asyncio]
 passlib[bcrypt]
 psycopg[binary]
 python-jose[cryptography] 
