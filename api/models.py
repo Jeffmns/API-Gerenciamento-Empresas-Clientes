@@ -22,16 +22,28 @@ class Produto (Base):
     preco_venda = Column(Float, nullable=False)
     codigo = Column(Integer, nullable=False)
     quantidade_estoque = Column(Integer, nullable=False)
+    estoque_minimo = Column(Integer, nullable=False, default=0, server_default="0")
     data_cadastro = Column(String(10), nullable=False)
     id_categoria = Column(Integer, ForeignKey('categorias.id'), nullable=False)
     fornecedores = relationship('Fornecedor', secondary=produto_fornecedor, back_populates='produtos')
 
-    def __init__(self, nome, preco_custo, preco_venda, codigo, quantidade_estoque, data_cadastro, id_categoria):
+    def __init__(
+        self,
+        nome,
+        preco_custo,
+        preco_venda,
+        codigo,
+        quantidade_estoque,
+        data_cadastro,
+        id_categoria,
+        estoque_minimo=0,
+    ):
         self.nome = nome
         self.preco_custo = preco_custo
         self.preco_venda = preco_venda
         self.codigo = codigo
         self.quantidade_estoque = quantidade_estoque
+        self.estoque_minimo = estoque_minimo
         self.data_cadastro = data_cadastro
         self.id_categoria = id_categoria
 
@@ -76,4 +88,3 @@ class Movimentacao_Estoque (Base):
         self.quantidade = quantidade
         self.data_movimentacao = data_movimentacao
         self.id_produto = id_produto
-

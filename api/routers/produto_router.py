@@ -1,5 +1,6 @@
 from fastapi import APIRouter, Depends, HTTPException, status
 from sqlalchemy import select
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.database import get_session
@@ -12,6 +13,18 @@ produto_router = APIRouter(prefix="/produtos", tags=["Produtos"])
 @produto_router.get("/")
 async def listar_produtos(session: AsyncSession = Depends(get_session)):
     resultado = await session.execute(select(Produto).order_by(Produto.id))
+    return resultado.scalars().all()
+
+
+@produto_router.get("/estoque-minimo")
+async def listar_produtos_estoque_minimo(
+    session: AsyncSession = Depends(get_session),
+):
+    resultado = await session.execute(
+        select(Produto)
+        .where(Produto.quantidade_estoque <= Produto.estoque_minimo)
+        .order_by(Produto.id)
+    )
     return resultado.scalars().all()
 
 
@@ -69,4 +82,11 @@ async def excluir_produto(
         raise HTTPException(status_code=404, detail="Produto não encontrado")
 
     await session.delete(produto)
-    await session.commit()
+    try:
+        await session.commit()
+    except IntegrityError as erro:
+        await session.rollback()
+        raise HTTPException(
+            status_code=status.HTTP_409_CONFLICT,
+            detail="Não é possível excluir um produto com movimentações de estoque",
+        ) from erro

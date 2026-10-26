@@ -1,4 +1,7 @@
-from pydantic import BaseModel
+from datetime import date
+from typing import Literal
+
+from pydantic import BaseModel, Field
 
 class ProdutoSchema(BaseModel):
     nome: str
@@ -6,6 +9,7 @@ class ProdutoSchema(BaseModel):
     preco_venda: float
     codigo: int
     quantidade_estoque: int
+    estoque_minimo: int = Field(default=0, ge=0)
     id_categoria: int
     data_cadastro: str
 
@@ -28,9 +32,9 @@ class FornecedorSchema(BaseModel):
         from_attributes= True
 
 class MovimentacaoEstoqueSchema(BaseModel):
-    tipo_movimentacao: str
-    quantidade: int
-    data_movimentacao: str
+    tipo_movimentacao: Literal["entrada", "saida", "saída"]
+    quantidade: int = Field(gt=0)
+    data_movimentacao: date
     id_produto: int
 
     class Config:
