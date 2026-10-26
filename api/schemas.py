@@ -3,6 +3,22 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
+
+class ErrorIssue(BaseModel):
+    field: str
+    message: str
+
+
+class ErrorDetail(BaseModel):
+    code: int
+    message: str
+    details: list[ErrorIssue] | None = None
+
+
+class ErrorResponse(BaseModel):
+    error: ErrorDetail
+
+
 class ProdutoSchema(BaseModel):
     nome: str
     preco_custo: float

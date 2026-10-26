@@ -5,12 +5,14 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.database import get_session
+from api.errors import ERROR_RESPONSES
 from api.models import Movimentacao_Estoque, Produto, produto_fornecedor
 from api.schemas import MovimentacaoEstoqueSchema
 
 movimentacao_estoque_router = APIRouter(
     prefix="/movimentacoes",
     tags=["Movimentações de Estoque"],
+    responses=ERROR_RESPONSES,
 )
 
 
@@ -23,7 +25,7 @@ async def listar_movimentacoes(
 ):
     if data_inicio and data_fim and data_inicio > data_fim:
         raise HTTPException(
-            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            status_code=status.HTTP_400_BAD_REQUEST,
             detail="data_inicio não pode ser posterior a data_fim",
         )
 

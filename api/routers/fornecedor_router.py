@@ -3,10 +3,15 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.database import get_session
+from api.errors import ERROR_RESPONSES
 from api.models import Fornecedor
 from api.schemas import FornecedorSchema
 
-fornecedor_router = APIRouter(prefix="/fornecedores", tags=["Fornecedores"])
+fornecedor_router = APIRouter(
+    prefix="/fornecedores",
+    tags=["Fornecedores"],
+    responses=ERROR_RESPONSES,
+)
 
 
 @fornecedor_router.get("/")

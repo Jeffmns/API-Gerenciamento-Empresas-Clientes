@@ -4,10 +4,15 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from api.database import get_session
+from api.errors import ERROR_RESPONSES
 from api.models import Categoria
 from api.schemas import CategoriaSchema
 
-categoria_router = APIRouter(prefix="/categorias", tags=["Categorias"])
+categoria_router = APIRouter(
+    prefix="/categorias",
+    tags=["Categorias"],
+    responses=ERROR_RESPONSES,
+)
 
 
 @categoria_router.get("/")
