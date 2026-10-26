@@ -17,3 +17,12 @@ class CategoriaSchema(BaseModel):
 
     class Config:
         from_attributes= True
+
+class FornecedorSchema(BaseModel):
+    nome: str
+    email: str
+    cnpj: str
+    telefone: str
+
+    class Config:
+        from_attributes= True
