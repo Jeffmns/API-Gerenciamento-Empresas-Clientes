@@ -16,6 +16,7 @@ fornecedor_router = APIRouter(
 
 @fornecedor_router.get("/")
 async def listar_fornecedores(session: AsyncSession = Depends(get_session)):
+    """Lista todos os fornecedores cadastrados, ordenados pelo identificador."""
     resultado = await session.execute(select(Fornecedor).order_by(Fornecedor.id))
     return resultado.scalars().all()
 
@@ -25,6 +26,7 @@ async def buscar_fornecedor(
     fornecedor_id: int,
     session: AsyncSession = Depends(get_session),
 ):
+    """Busca um fornecedor pelo ID; retorna 404 quando ele não existe."""
     fornecedor = await session.get(Fornecedor, fornecedor_id)
     if fornecedor is None:
         raise HTTPException(
@@ -39,6 +41,7 @@ async def criar_fornecedor(
     fornecedor_schema: FornecedorSchema,
     session: AsyncSession = Depends(get_session),
 ):
+    """Cadastra um fornecedor e retorna o registro criado."""
     fornecedor = Fornecedor(**fornecedor_schema.model_dump())
     session.add(fornecedor)
     await session.commit()
@@ -52,6 +55,7 @@ async def atualizar_fornecedor(
     fornecedor_schema: FornecedorSchema,
     session: AsyncSession = Depends(get_session),
 ):
+    """Atualiza os dados do fornecedor identificado pelo ID."""
     fornecedor = await session.get(Fornecedor, fornecedor_id)
     if fornecedor is None:
         raise HTTPException(
@@ -75,6 +79,7 @@ async def excluir_fornecedor(
     fornecedor_id: int,
     session: AsyncSession = Depends(get_session),
 ):
+    """Exclui o fornecedor identificado pelo ID."""
     fornecedor = await session.get(Fornecedor, fornecedor_id)
     if fornecedor is None:
         raise HTTPException(

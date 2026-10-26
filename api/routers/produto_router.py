@@ -17,6 +17,7 @@ produto_router = APIRouter(
 
 @produto_router.get("/")
 async def listar_produtos(session: AsyncSession = Depends(get_session)):
+    """Lista todos os produtos cadastrados, ordenados pelo identificador."""
     resultado = await session.execute(select(Produto).order_by(Produto.id))
     return resultado.scalars().all()
 
@@ -25,6 +26,7 @@ async def listar_produtos(session: AsyncSession = Depends(get_session)):
 async def listar_produtos_estoque_minimo(
     session: AsyncSession = Depends(get_session),
 ):
+    """Lista produtos cujo estoque está igual ou abaixo do limite mínimo."""
     resultado = await session.execute(
         select(Produto)
         .where(Produto.quantidade_estoque <= Produto.estoque_minimo)
@@ -38,6 +40,7 @@ async def buscar_produto(
     produto_id: int,
     session: AsyncSession = Depends(get_session),
 ):
+    """Busca um produto pelo ID; retorna 404 quando ele não existe."""
     produto = await session.get(Produto, produto_id)
     if produto is None:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
@@ -49,6 +52,7 @@ async def criar_produto(
     produto_schema: ProdutoSchema,
     session: AsyncSession = Depends(get_session),
 ):
+    """Cadastra um produto; estoque_minimo assume 0 se não for informado."""
     produto = Produto(**produto_schema.model_dump())
     session.add(produto)
     await session.commit()
@@ -62,6 +66,7 @@ async def atualizar_produto(
     produto_schema: ProdutoSchema,
     session: AsyncSession = Depends(get_session),
 ):
+    """Substitui os dados do produto identificado pelo ID."""
     produto = await session.get(Produto, produto_id)
     if produto is None:
         raise HTTPException(status_code=404, detail="Produto não encontrado")
@@ -82,6 +87,7 @@ async def excluir_produto(
     produto_id: int,
     session: AsyncSession = Depends(get_session),
 ):
+    """Exclui um produto; retorna 409 se houver movimentações vinculadas."""
     produto = await session.get(Produto, produto_id)
     if produto is None:
         raise HTTPException(status_code=404, detail="Produto não encontrado")

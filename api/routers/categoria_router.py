@@ -17,6 +17,7 @@ categoria_router = APIRouter(
 
 @categoria_router.get("/")
 async def listar_categorias(session: AsyncSession = Depends(get_session)):
+    """Lista todas as categorias cadastradas, ordenadas pelo identificador."""
     resultado = await session.execute(select(Categoria).order_by(Categoria.id))
     return resultado.scalars().all()
 
@@ -26,6 +27,7 @@ async def buscar_categoria(
     categoria_id: int,
     session: AsyncSession = Depends(get_session),
 ):
+    """Busca uma categoria pelo ID; retorna 404 quando ela não existe."""
     categoria = await session.get(Categoria, categoria_id)
     if categoria is None:
         raise HTTPException(
@@ -40,6 +42,7 @@ async def criar_categoria(
     categoria_schema: CategoriaSchema,
     session: AsyncSession = Depends(get_session),
 ):
+    """Cadastra uma categoria e retorna o registro criado."""
     categoria = Categoria(nome=categoria_schema.nome)
     session.add(categoria)
     await session.commit()
@@ -53,6 +56,7 @@ async def atualizar_categoria(
     categoria_schema: CategoriaSchema,
     session: AsyncSession = Depends(get_session),
 ):
+    """Atualiza o nome da categoria identificada pelo ID."""
     categoria = await session.get(Categoria, categoria_id)
     if categoria is None:
         raise HTTPException(
@@ -74,6 +78,7 @@ async def excluir_categoria(
     categoria_id: int,
     session: AsyncSession = Depends(get_session),
 ):
+    """Exclui uma categoria; retorna 409 se ainda houver produtos vinculados."""
     categoria = await session.get(Categoria, categoria_id)
     if categoria is None:
         raise HTTPException(

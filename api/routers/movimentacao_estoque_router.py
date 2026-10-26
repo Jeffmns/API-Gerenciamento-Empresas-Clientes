@@ -23,6 +23,7 @@ async def listar_movimentacoes(
     id_fornecedor: int | None = Query(default=None, gt=0),
     session: AsyncSession = Depends(get_session),
 ):
+    """Lista o histórico, filtrando opcionalmente por período e fornecedor."""
     if data_inicio and data_fim and data_inicio > data_fim:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
@@ -62,6 +63,7 @@ async def buscar_movimentacao(
     movimentacao_id: int,
     session: AsyncSession = Depends(get_session),
 ):
+    """Busca uma movimentação imutável pelo ID."""
     movimentacao = await session.get(Movimentacao_Estoque, movimentacao_id)
     if movimentacao is None:
         raise HTTPException(
@@ -76,6 +78,7 @@ async def criar_movimentacao(
     movimentacao_schema: MovimentacaoEstoqueSchema,
     session: AsyncSession = Depends(get_session),
 ):
+    """Registra entrada ou saída e atualiza o saldo na mesma transação."""
     resultado = await session.execute(
         select(Produto)
         .where(Produto.id == movimentacao_schema.id_produto)
