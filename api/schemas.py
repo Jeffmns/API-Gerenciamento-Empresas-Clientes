@@ -26,3 +26,12 @@ class FornecedorSchema(BaseModel):
 
     class Config:
         from_attributes= True
+
+class MovimentacaoEstoqueSchema(BaseModel):
+    tipo_movimentacao: str
+    quantidade: int
+    data_movimentacao: str
+    id_produto: int
+
+    class Config:
+        from_attributes= True
